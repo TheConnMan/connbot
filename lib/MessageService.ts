@@ -15,7 +15,7 @@ export default class MessageService {
     try {
       if (payload.event.text.indexOf('props') !== -1 && payload.event.text.match(MessageService.USER_REGEX)) {
         const userId = MessageService.USER_REGEX.exec(payload.event.text)[1];
-        let user = await this.userService.getUser(userId);
+        let user = await this.userService.getUser(userId, payload.team_id);
         if (!user) {
           user = new User(userId, payload.team_id, 0);
         }

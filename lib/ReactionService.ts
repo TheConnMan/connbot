@@ -21,7 +21,7 @@ export default class ReactionService {
   }
 
   private async tallyReaction(message: Message, isAdded: boolean) {
-    const user = await this.userService.getUser(message.userId);
+    const user = await this.userService.getUser(message.userId, message.teamId);
     user.reactionCount += isAdded ? 1 : -1;
     return this.userService.saveUser(user);
   }

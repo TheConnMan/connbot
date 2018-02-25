@@ -13,10 +13,11 @@ export default class UserService {
     }).promise();
   }
 
-  public async getUser(id: string): Promise<User> {
+  public async getUser(userId: string, teamId: string): Promise<User> {
     const response = await this.client.get({
       Key: {
-        id
+        userId,
+        teamId
       },
       TableName: process.env.REACTIONS_TABLE_NAME
     }).promise();
