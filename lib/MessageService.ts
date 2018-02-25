@@ -8,13 +8,17 @@ import UserService from './UserService';
 export default class MessageService {
 
   private static USER_REGEX = /<(@U[A-Z0-9]+)>/;
+  private static KEYWORDS = [
+    'props',
+    'kudos'
+  ];
 
   private client = new DynamoDB.DocumentClient();
   private userService = new UserService();
 
   public async processMessage(payload, bot) {
     try {
-      if (payload.event.text.indexOf('props') !== -1 && payload.event.text.match(MessageService.USER_REGEX)) {
+      if (this.textContainsKeyword(payload.event.text) && payload.event.text.match(MessageService.USER_REGEX)) {
         const userId = MessageService.USER_REGEX.exec(payload.event.text)[1];
         let user = await this.userService.getUser(userId, payload.team_id);
         if (!user) {
@@ -47,5 +51,11 @@ export default class MessageService {
       TableName: process.env.MESSAGE_TABLE_NAME
     }).promise();
     return plainToClass(Message, response.Item);
+  }
+
+  private textContainsKeyword(text: string): boolean {
+    return MessageService.KEYWORDS.reduce((contains, keyword) => {
+      return contains || text.indexOf(keyword) !== -1;
+    }, false);
   }
 }
