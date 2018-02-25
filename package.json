@@ -9,6 +9,9 @@
   "devDependencies": {
     "@types/aws-lambda": "0.0.22",
     "@types/node": "^8.0.57",
+    "aws-sdk": "^2.202.0",
+    "class-transformer": "^0.1.9",
+    "reflect-metadata": "^0.1.12",
     "serverless-slack": "^1.0.26",
     "serverless-webpack": "^4.0.0",
     "ts-loader": "^2.3.7",

@@ -11,6 +11,8 @@ custom:
 
   # The dynamodb table to store OAuth access data
   slack_table_name: Teams
+  reactions_table_name: Reactions
+  message_table_name: Messages
 
   # The path used to post Slack events to
   slack_event_path: slack
@@ -40,6 +42,9 @@ provider:
       Resource: "arn:aws:dynamodb:us-east-1:*:*"
   environment:
     TABLE_NAME: ${self:custom.slack_table_name}
+    REACTIONS_TABLE_NAME: ${self:custom.reactions_table_name}
+    MESSAGE_TABLE_NAME: ${self:custom.message_table_name}
+    API_APP_ID: ${ssm:connbot.SLACK_APP_API_ID}
     CLIENT_ID: ${ssm:connbot.SLACK_CLIENT_ID}
     CLIENT_SECRET: ${ssm:connbot.SLACK_CLIENT_SECRET}
     CLIENT_SCOPES: ${self:custom.slack_client_scopes}
@@ -98,3 +103,35 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:custom.slack_table_name}
+    MessageDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: timestamp
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: timestamp
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.message_table_name}
+    UserReactionsDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.reactions_table_name}
