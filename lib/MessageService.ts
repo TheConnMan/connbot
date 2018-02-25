@@ -12,6 +12,11 @@ export default class MessageService {
     'props',
     'kudos'
   ];
+  private static KUDOS_TEMPLATES = [
+    'Nice job <user>!',
+    'You\'re doing great <user>!',
+    'Another day, another dollar for <user>!'
+  ];
 
   private client = new DynamoDB.DocumentClient();
   private userService = new UserService();
@@ -28,7 +33,7 @@ export default class MessageService {
         user.reactionCount++;
         winston.debug(`Incrementing reaction for user ${userId}`);
         await this.userService.saveUser(user);
-        const message = await bot.reply(`Nice job <${userId}>!`);
+        const message = await bot.reply(this.getRandomMessage(userId));
         return this.saveMessage(new Message(message.ts, payload.team_id, userId));
       }
     } catch (e) {
@@ -57,5 +62,10 @@ export default class MessageService {
     return MessageService.KEYWORDS.reduce((contains, keyword) => {
       return contains || text.indexOf(keyword) !== -1;
     }, false);
+  }
+
+  private getRandomMessage(userId: string): string {
+    const template = MessageService.KUDOS_TEMPLATES[Math.floor(MessageService.KUDOS_TEMPLATES.length * Math.random())];
+    return template.replace('<user>', `<${userId}>`);
   }
 }
