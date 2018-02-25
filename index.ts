@@ -18,6 +18,7 @@ winston.add(winston.transports.Console, {
 if (process.env.LOGDNA_KEY) {
   winston.add((winston.transports as any).Logdna, {
     app: 'connbot',
+    env: process.env.STAGE,
     handleExceptions: true,
     index_meta: true,
     key: process.env.LOGDNA_KEY,

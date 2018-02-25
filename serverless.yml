@@ -41,6 +41,7 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-1:*:*"
   environment:
+    STAGE: ${opt:stage}
     TABLE_NAME: ${self:custom.slack_table_name}
     REACTIONS_TABLE_NAME: ${self:custom.reactions_table_name}
     MESSAGE_TABLE_NAME: ${self:custom.message_table_name}
