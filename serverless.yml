@@ -10,9 +10,9 @@ custom:
   slack_enable_logging: true
 
   # The dynamodb table to store OAuth access data
-  slack_table_name: Teams
-  reactions_table_name: Reactions
-  message_table_name: Messages
+  slack_table_name: Teams-${opt:stage}
+  reactions_table_name: Reactions-${opt:stage}
+  message_table_name: Messages-${opt:stage}
 
   # The path used to post Slack events to
   slack_event_path: slack
@@ -45,12 +45,12 @@ provider:
     TABLE_NAME: ${self:custom.slack_table_name}
     REACTIONS_TABLE_NAME: ${self:custom.reactions_table_name}
     MESSAGE_TABLE_NAME: ${self:custom.message_table_name}
-    API_APP_ID: ${ssm:connbot.SLACK_APP_API_ID}
-    CLIENT_ID: ${ssm:connbot.SLACK_CLIENT_ID}
-    CLIENT_SECRET: ${ssm:connbot.SLACK_CLIENT_SECRET}
+    API_APP_ID: ${ssm:connbot.${opt:stage}.SLACK_APP_API_ID}
+    CLIENT_ID: ${ssm:connbot.${opt:stage}.SLACK_CLIENT_ID}
+    CLIENT_SECRET: ${ssm:connbot.${opt:stage}.SLACK_CLIENT_SECRET}
     CLIENT_SCOPES: ${self:custom.slack_client_scopes}
     INSTALL_REDIRECT: ${self:custom.slack_install_redirect}
-    VERIFICATION_TOKEN: ${ssm:connbot.VERIFICATION_TOKEN}
+    VERIFICATION_TOKEN: ${ssm:connbot.${opt:stage}.VERIFICATION_TOKEN}
     ENABLE_LOGGING: ${self:custom.slack_enable_logging}
     LOGDNA_KEY: ${ssm:connbot.LOGDNA_KEY}
 
