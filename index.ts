@@ -5,6 +5,26 @@ import MessageService from './lib/MessageService';
 import ReactionService from './lib/ReactionService';
 import SlashCommandService from './lib/SlashCommandService';
 
+const logdna = require('logdna-winston');
+import * as winston from 'winston';
+
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {
+  level: 'debug',
+  prettyPrint: true,
+  timestamp: true
+});
+
+if (process.env.LOGDNA_KEY) {
+  winston.add((winston.transports as any).Logdna, {
+    app: 'connbot',
+    handleExceptions: true,
+    index_meta: true,
+    key: process.env.LOGDNA_KEY,
+    level: 'debug'
+  });
+}
+
 exports.handler = slack.handler.bind(slack);
 
 const messageService = new MessageService();
@@ -30,6 +50,6 @@ slack.on('/connbot', async (msg, bot) => {
   try {
     await slashCommandService.process(msg, bot);
   } catch (e) {
-    console.log(e);
+    winston.error('Error processing a slash command', e);
   }
 });

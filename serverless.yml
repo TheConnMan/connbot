@@ -51,6 +51,7 @@ provider:
     INSTALL_REDIRECT: ${self:custom.slack_install_redirect}
     VERIFICATION_TOKEN: ${ssm:connbot.VERIFICATION_TOKEN}
     ENABLE_LOGGING: ${self:custom.slack_enable_logging}
+    LOGDNA_KEY: ${ssm:connbot.LOGDNA_KEY}
 
 
 functions:

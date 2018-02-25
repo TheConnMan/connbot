@@ -1,3 +1,4 @@
+import * as winston from 'winston';
 import Message from '../model/Message';
 import Team from '../model/Team';
 import User from '../model/User';
@@ -12,12 +13,16 @@ export default class ReactionService {
   private userService = new UserService();
 
   public async processReaction(payload) {
-    if (payload.api_app_id !== process.env.API_APP_ID) {
-      return;
+    try {
+      if (payload.api_app_id !== process.env.API_APP_ID) {
+        return;
+      }
+      const team = await this.teamService.getTeam(payload.team_id);
+      const message = await this.messageService.getMessage(payload.event.item.ts);
+      return this.tallyReaction(message, payload.event.type === 'reaction_added');
+    } catch (e) {
+      winston.error('Unable to process a reaction', e);
     }
-    const team = await this.teamService.getTeam(payload.team_id);
-    const message = await this.messageService.getMessage(payload.event.item.ts);
-    return this.tallyReaction(message, payload.event.type === 'reaction_added');
   }
 
   private async tallyReaction(message: Message, isAdded: boolean) {
