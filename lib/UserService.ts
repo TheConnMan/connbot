@@ -23,4 +23,17 @@ export default class UserService {
     }).promise();
     return plainToClass(User, response.Item);
   }
+
+  public async listUsers(teamId: string): Promise<User[]> {
+    const response = await this.client.query({
+      KeyConditionExpression: 'teamId = :teamId',
+      ExpressionAttributeValues: {
+        ':teamId': teamId
+      },
+      TableName: process.env.REACTIONS_TABLE_NAME
+    }).promise();
+    return response.Items.map((item) => {
+      return plainToClass(User, item);
+    });
+  }
 }
